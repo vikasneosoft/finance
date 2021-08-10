@@ -1,0 +1,172 @@
+@extends('employee.layout')
+@section('title')
+    Manage Expenses
+@endsection
+
+@section('employee-content')
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row">
+
+
+                </div>
+                <div class="row">
+
+                    <div class="col-sm-6">
+
+
+
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{{ route('employee.dashboard') }}"><i
+                                        class="fa fa-dashboard"></i>
+                                    Dashboard</a></li>
+
+                            <li class="breadcrumb-item active">Submitted Expenses</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+
+                            <div class="card-body">
+                                @include('flash::message')
+                                @if (session()->has('message'))
+                                    <div class="alert alert-success">
+                                        {{ session()->get('message') }}
+                                    </div>
+                                @endif
+                                <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <table
+                                                class="table x-table-responsive table-sm table-bordered table-striped yajra-datatable">
+                                                <thead class="thead-color">
+                                                    <tr role="row">
+                                                        <th>Fin Year</th>
+                                                        <th>Type</th>
+                                                        <th class="right-side-text">ExpenseId</th>
+                                                        {{-- <th>CostCenter</th>
+                                                            <th>Proj.Code</th> --}}
+                                                            {{-- <th>Incharge</th> --}}
+                                                        <th class="right-side-text">Budget</th>
+                                                        <th class="right-side-text">Expense</th>
+                                                        <th class="right-side-text">Balance</th>
+                                                        <th>Creator</th>
+                                                        <th>Date</th>
+                                                        <th>Status</th>
+                                                        <th>View</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+@endsection
+@section('employee-js')
+
+    <script src="{{ asset('public/js/bootbox.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $(function() {
+                var table = $('.yajra-datatable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ route('expenses.get_submited_expenses') }}",
+                    columns: [{
+                            data: 'financialYear',
+                            name: 'financialYear'
+                        },
+                        {
+                            data: 'expenseType',
+                            name: 'expenseType'
+                        },
+                        {
+                            data: 'id',
+                            name: 'id'
+                        },
+
+
+                        /* {
+                            data: 'project_in_charge',
+                            name: 'project_in_charge'
+                        }, */
+                        {
+                            data: 'budgetAmt',
+                            name: 'budgetAmt'
+                        },
+                        {
+                            data: 'expensesSum',
+                            name: 'expensesSum'
+                        },
+                        {
+                            data: 'balance',
+                            name: 'balance'
+                        },
+                        {
+                            data: 'createdBy',
+                            name: 'createdBy'
+                        },
+                        {
+                            data: 'createdDate',
+                            name: 'createdDate'
+
+                        },
+                        {
+                            data: 'isApproved',
+                            name: 'isApproved',
+                        },
+
+
+
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: true,
+                            searchable: true
+                        },
+                    ],
+                    columnDefs: [ {
+                    targets: [2,3,4,5],
+                    createdCell: function (td, cellData, rowData, row, col) {
+                        $(td).css('text-align', 'right');
+                    }
+                    } ],
+                    "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+                        if (aData['is_approved'] == 0) {
+
+                            $('td', nRow).css('background-color', '#F0E68C');
+                        } else if (aData['is_approved'] == 1) {
+                            $('td', nRow).css('background-color', '#00000');
+                        } else {
+                            $('td', nRow).css('background-color', '#dc3545');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+@endsection
